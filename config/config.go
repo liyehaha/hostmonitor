@@ -8,14 +8,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Promcfg struct {
-	Server	string `yaml:"Server"`
-	Port    int    `yaml:"Port"`
-	Intval  int    `yaml:"Intval"`
+type Disk struct {
+	Path	string `yaml:"Path"`
 }
 
 type Config struct {
-	PromPushGW Promcfg `yaml:"PromPushGW"`
+	Disk Disk `yaml:"Disk"`
 }
 
 var Monitor Config

@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
+	"flag"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -33,7 +34,7 @@ func Load(path string) {
 		os.Exit(-1)
 	}
 
-	err = yaml.Unmarshal(content, &Instance)
+	err = yaml.Unmarshal(content, &Monitor)
 	if err != nil {
 		fmt.Printf("configure file format error, %s\n", err.Error())
 		os.Exit(-1)

@@ -9,13 +9,13 @@ import (
 )
 
 type Promcfg struct {
-	Server	string
-	Port    int
-	Intval  int
+	Server	string `yaml:"Server"`
+	Port    int    `yaml:"Port"`
+	Intval  int    `yaml:"Intval"`
 }
 
 type Config struct {
-	PromPushGW Promcfg
+	PromPushGW Promcfg `yaml:"PromPushGW"`
 }
 
 var Monitor Config

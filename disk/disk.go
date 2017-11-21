@@ -54,7 +54,7 @@ func parseDiskStats(r io.Reader, f string) (map[string]map[int]string, error) {
 	return diskStats, scanner.Err()
 }
 
-func getDiskStats(f string) (map[string]map[int]string, error) {
+func GetDiskStats(f string) (map[string]map[int]string, error) {
 	file, err := os.Open(f)
 	if err != nil {
 		return nil, err

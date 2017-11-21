@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
-	"flag"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -20,7 +19,6 @@ type Config struct {
 }
 
 var Monitor Config
-var config_path = flag.String("conf", "config.yaml", "config file")
 
 func Load(path string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {

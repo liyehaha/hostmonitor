@@ -1,65 +1,41 @@
 package disk
 
 import (
-	"io"
-	"bufio"
+	"os/exec"
 	"strings"
-	"os"
-	"strconv"
-	"fmt"
+	"encoding/json"
 )
 
-const (
-	diskSectorSize uint64 = 512
-)
-
-func convertDiskSectorsToBytes(sectorCount string) (string, error) {
-	sectors, err := strconv.ParseUint(sectorCount, 10, 64)
-	if err != nil {
-		return "", err
-	}
-
-	return strconv.FormatUint(sectors*diskSectorSize, 10), nil
+type DiskUsage struct {
+	Name	string
+	Total	string
+	Used    string
+	Percent string
 }
 
-func parseDiskStats(r io.Reader, f string) (map[string]map[int]string, error) {
-	var (
-		diskStats = map[string]map[int]string{}
-		scanner   = bufio.NewScanner(r)
-	)
-
-	for scanner.Scan() {
-		parts := strings.Fields(scanner.Text())
-		if len(parts) < 4 { // we strip major, minor and dev
-			return nil, fmt.Errorf("invalid line in %s: %s", f, scanner.Text())
-		}
-		dev := parts[2]
-		diskStats[dev] = map[int]string{}
-		for i, v := range parts[3:] {
-			diskStats[dev][i] = v
-		}
-		bytesRead, err := convertDiskSectorsToBytes(diskStats[dev][2])
-		if err != nil {
-			return nil, fmt.Errorf("invalid value for sectors read in %s: %s", f, scanner.Text())
-		}
-		diskStats[dev][11] = bytesRead
-
-		bytesWritten, err := convertDiskSectorsToBytes(diskStats[dev][6])
-		if err != nil {
-			return nil, fmt.Errorf("invalid value for sectors written in %s: %s", f, scanner.Text())
-		}
-		diskStats[dev][12] = bytesWritten
-	}
-
-	return diskStats, scanner.Err()
-}
-
-func GetDiskStats(f string) (map[string]map[int]string, error) {
-	file, err := os.Open(f)
+func getDiskStats() ([]byte, error) {
+	cmd := "df -h --output=source,size,used,pcent | grep '^/dev' | column -t -o '|' | sed 's/ //g'"
+	out, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	return out, err
+}
 
-	return parseDiskStats(file, f)
+func formatStrResult(b []byte) map[string]*DiskUsage {
+	map1 := strings.Split(string(b), "\n")
+	map2 := make(map[string]*DiskUsage)
+	for _, v := range map1 {
+		if v != "" {
+			s := strings.Split(v, "|")
+			map2[s[0]] = &DiskUsage{Total: s[1], Used: s[2], Percent: s[3]}
+		}
+	}
+	return map2
+}
+
+func DiskMonitor() (result []byte) {
+	disk_usage, _ := getDiskStats()
+	result, _ = json.Marshal(formatStrResult(disk_usage))
+	return
 }

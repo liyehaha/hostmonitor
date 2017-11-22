@@ -34,8 +34,8 @@ func formatStrResult(b []byte) map[string]*DiskUsage {
 	return map2
 }
 
-func DiskMonitor() (result []byte) {
+func DiskMonitor() map[string]*DiskUsage {
 	disk_usage, _ := getDiskStats()
-	result, _ = json.Marshal(formatStrResult(disk_usage))
-	return
+	result := formatStrResult(disk_usage)
+	return result
 }

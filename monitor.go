@@ -2,13 +2,13 @@ package main
 
 import (
 	//"./config"
-	disk "./disk"
+	"./disk"
 
 	"fmt"
 )
 
 func main() {
-	var f = "/proc/diskstats"
+	d := disk.DiskMonitor()
 
-	fmt.Println(disk.GetDiskStats(f))
+	fmt.Println(d)
 }

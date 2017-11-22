@@ -3,7 +3,6 @@ package disk
 import (
 	"os/exec"
 	"strings"
-	"encoding/json"
 )
 
 type DiskUsage struct {
